@@ -5,6 +5,7 @@ const url = `http://localhost:8000/api/v1`;
 export async function getLCStore() {
     try {
         var res = await axios.get(`${url}/store`, { timeout: 100000 });
+        console.log(res.data)
         return res.data;
     } catch (error) {
         return error;
@@ -12,30 +13,90 @@ export async function getLCStore() {
 }
 
 
-export async function getLCUpdates(page) {
+export async function getLCUpdates(period) {
     try {
-        var res = await axios.get(`${url}/update/${page}`, { timeout: 100000 });
+        var res = await axios.get(`${url}/update/${period}`, { timeout: 100000 });
+        console.log(res.data)
         return res.data;
     } catch (error) {
         return error;
     }
 }
+
+export async function getLCProof(lcUpdateId) {
+    try {
+        var res = await axios.get(`${url}/proof/${lcUpdateId}`, { timeout: 100000 });
+        console.log(res.data)
+        return res.data;
+    } catch (error) {
+        return error;
+    }
+}
+
 
 export function shortValue(value) {
     if (Array.isArray(value)) {
-        return `[_;${value.length}]`
+        return `[...]`
     }
     else if (typeof value === 'object' && value !== null) {
-        let res = Object.keys(value).filter(e => e[0] != '_').map(e => `${e}: any`);
-        let array = [];
-        if (res.length > 2) {
-            array = [...res.slice(0, 1), '...', ...res.slice(-1)];
-        }
-        else array = res;
-        return ` {${array.join(" , ")}} `;
+        return `{...}`;
     } else {
         let res = `${value}`;
         if (res.length > 10) return res.substring(0, 10) + '...';
         return res;
     }
+}
+
+
+export async function processLCUpdate(contract, lcProof) {
+    try {
+
+        lcProof = arrayNumberToUint8Array(lcProof);
+        // var data = {
+        //     finalityProof: lcProof.finality_proof.sliced_proof,
+        //     finalityData: lcProof.finality_proof.public_inputs,
+        //     nextSyncCommProof: lcProof.next_sync_committee_proof.sliced_proof,
+        //     nextSyncCommData: lcProof.next_sync_committee_proof.public_inputs,
+        //     lcUpdateProof: lcProof.lc_update_proof.sliced_proof,
+        //     lcUpdateData: lcProof.lc_update_proof.public_inputs,
+        //     nextPubkeys: lcProof.next_pubkeys
+        // }
+        var data = [
+            lcProof.finality_proof.sliced_proof,
+            lcProof.finality_proof.public_inputs,
+            lcProof.next_sync_committee_proof.sliced_proof,
+            lcProof.next_sync_committee_proof.public_inputs,
+            lcProof.lc_update_proof.sliced_proof,
+            lcProof.lc_update_proof.public_inputs,
+            lcProof.next_pubkeys
+        ]
+        console.log(data)
+        let tx = await contract.processLCUpdate(data, { gasLimit: 8000000 });
+        let res = await tx.wait()
+        console.log('res:', res)
+    } catch (error) {
+        return error;
+    }
+}
+
+
+export function arrayNumberToUint8Array(obj) {
+    let res = {};
+    let check = 0;
+    if (Array.isArray(obj)) {
+        if (obj[0] != null && Array.isArray(obj[0])) res = [];
+        else {
+            res = Uint8Array.from(obj); check = 1;
+        }
+    }
+    if (!check) {
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                let value = obj[key]
+                if (typeof value == 'object') res[key] = arrayNumberToUint8Array(value);
+                else res[key] = value
+            }
+        }
+    }
+    return res;
 }
