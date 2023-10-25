@@ -6,9 +6,9 @@ function Entry({ name, value, isOpen = false }) {
     var [open, setOpen] = useState(isOpen);
 
     return <div>
-        <div class={`flex ${typeof value === 'object' ? 'hover' : ''}`} onClick={() => {
+        <div class={`flex ${typeof value == 'object' ? 'hover' : ''}`} onClick={() => {
             if (open) setOpen(false);
-            else setOpen(true);
+            else if (typeof value == 'object') setOpen(true);
         }}>
             <h3 style={{ fontWeight: 'bold' }}>{name}: </h3>
             {!open && <h3>{shortValue(value)}</h3>}

@@ -114,12 +114,12 @@ function LightClientUpdate({ obj, currentPeriod }) {
                 }}>Push to contract</button>}
                 {loading == 1 &&
                     <button class="btn">
-                        <i class="fa fa-spinner fa-spin"></i>Generating
+                        <i class="fa fa-spinner fa-spin"></i> Generating
                     </button>
                 }
                 {loading == 2 &&
                     <button class="btn">
-                        <i class="fa fa-spinner fa-spin"></i>Verifying
+                        <i class="fa fa-spinner fa-spin"></i> Verifying
                     </button>
                 }
                 <i class="fa fa-arrow-down"></i>
