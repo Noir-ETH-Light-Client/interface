@@ -10,8 +10,8 @@ function Entry({ name, value, isOpen = false }) {
             if (open) setOpen(false);
             else if (typeof value == 'object') setOpen(true);
         }}>
-            <h3 style={{ fontWeight: 'bold' }}>{name}: </h3>
-            {!open && <h3>{shortValue(value)}</h3>}
+            <h3 style={{ fontWeight: 'bold' }}>{name}:</h3>
+            {!open && <h3 style={{ marginLeft: '10px' }}>{shortValue(value)}</h3>}
         </div>
         {(open && typeof value === 'object') && <div style={{ marginLeft: '20px' }}>
             {Object.entries(value).filter(([name1, _value1]) => name1[0] != '_').map(([name1, value1]) =>
