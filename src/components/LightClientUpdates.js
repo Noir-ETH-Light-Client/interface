@@ -6,7 +6,7 @@ import Loading from "./Loading";
 
 function LightClientUpdates() {
     var [loadingUpdates, setLoadingUpdates] = useState(true);
-    var [lcUpdates, setLcUpdates] = useState([]);
+    var [lcUpdates, setLcUpdates] = useState(null);
     var [signatureSlot, setSignatureSlot] = useState(null);
     var [currentPeriod, setCurrentPeriod] = useState(null);
     var [percent, setPercent] = useState(0);
@@ -55,7 +55,7 @@ function LightClientUpdates() {
 
     return <div class="container" style={{ marginBottom: '20px' }}>
         <h1>Light Client Updates</h1>
-        {!loadingUpdates && <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {!loadingUpdates && lcUpdates != null && <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <div class='lc-updates' style={{ flexBasis: '1' }}>
                 {lcUpdates.preType > 0 && <LightClientUpdate obj={lcUpdates.oldest} currentPeriod={currentPeriod}></LightClientUpdate>}
                 {lcUpdates.preType > 2 && <Line type={2}></Line>}
@@ -94,45 +94,52 @@ function LightClientUpdate({ obj, currentPeriod }) {
     let { sendContract, account, setCntUpdate, cntUpdate } = useContext(UserContext)
     let status = obj.is_on_contract ? "done" : "pending";
 
-    return <div class={`lc-update ${status}`} onClick={() => { if (open == false) setOpen(true) }} >
+    return <div class={`lc-update ${status}`} onMouseEnter={() => { if (open == false) setOpen(true) }} onMouseLeave={() => setOpen(false)} >
         {period == currentPeriod + 1 &&
             <div class="arrow">
                 {loading == 0 && <button class='btn' onClick={async () => {
-                    setLoading(1)
-                    let proof = await getLCProof(obj._id);
-                    if (proof.error != null) alert("Proof error:" + proof.error);
-                    else if (account != null) {
-                        setLoading(2);
-                        await processLCUpdate(sendContract, proof);
+                    if (account != null) {
+                        setLoading(1)
+                        let proof = await getLCProof(obj._id);
+                        if (proof.error != null) alert("Proof error:" + proof.error);
+                        else {
+                            setLoading(2);
+                            await processLCUpdate(sendContract, proof);
+                            setCntUpdate(++cntUpdate)
+                        }
+                        setLoading(0)
                     }
                     else alert("Please connect wallet");
-                    setCntUpdate(++cntUpdate)
-                    setLoading(0)
+
                 }}>Push to contract</button>}
                 {loading == 1 &&
                     <button class="btn">
-                        <i class="fa fa-spinner fa-spin"></i>Generating Proof
+                        <i class="fa fa-spinner fa-spin"></i>Generating
                     </button>
                 }
                 {loading == 2 &&
                     <button class="btn">
-                        <i class="fa fa-spinner fa-spin"></i>Verifying Proof
+                        <i class="fa fa-spinner fa-spin"></i>Verifying
                     </button>
                 }
                 <i class="fa fa-arrow-down"></i>
             </div>}
         <h3>period {period}</h3>
         {open &&
-            <div class='lc-update-detail'>
-                <div style={{ display: 'flex' }}>
-                    <h2>{`LC Update at period ${period}`}</h2>
-                    <h2 class='cancel' style={{ marginLeft: 'auto' }} onClick={() => setOpen(false)}>X</h2>
-                </div>
-                <div class="entry">
-                    <Entry name="LC Update" value={obj} isOpen={true}></Entry>
-                </div>
+            <div class="lc-update-wrapper">
+                <div style={{ height: '20px' }}></div>
+                <div class='lc-update-detail'>
+                    <div style={{ display: 'flex' }}>
+                        <h2>{`LC Update at period ${period}`}</h2>
+                        <h2 class='cancel' style={{ marginLeft: 'auto' }} onClick={() => setOpen(false)}>X</h2>
+                    </div>
+                    <div class="entry">
+                        <Entry name="LC Update" value={obj} isOpen={true}></Entry>
+                    </div>
 
-            </div>}
+                </div>
+            </div>
+        }
     </div>
 }
 

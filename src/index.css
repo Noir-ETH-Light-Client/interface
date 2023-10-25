@@ -126,14 +126,16 @@ h4:hover {
 }
 
 .lc-update-detail {
+  background: rgba(0, 0, 0, 0.76);
+  padding: 20px;
+  border-radius: 16px;
+}
+
+.lc-update-wrapper {
   position: absolute;
   top: 100%;
   left: 50%;
   transform: translate(-50%, 0);
-  background: rgba(0, 0, 0, 0.76);
-  margin-top: 20px;
-  padding: 20px;
-  border-radius: 16px;
   width: 400px;
   z-index: 1000000;
 }
@@ -160,9 +162,13 @@ h4:hover {
   border-radius: 5px;
 }
 
+.wallet {
+  margin-left: auto;
+}
+
 .btn {
   margin-top: 10px;
-  width: 100%;
+  width: 130px;
   height: 40px;
   font-size: 15px;
   color: #fff;

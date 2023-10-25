@@ -8,7 +8,9 @@ export async function getLCStore() {
         console.log(res.data)
         return res.data;
     } catch (error) {
-        return error;
+        return {
+            error: 'error server'
+        }
     }
 }
 
@@ -19,7 +21,9 @@ export async function getLCUpdates(period) {
         console.log(res.data)
         return res.data;
     } catch (error) {
-        return error;
+        return {
+            error: 'error server'
+        }
     }
 }
 
@@ -29,7 +33,9 @@ export async function getLCProof(lcUpdateId) {
         console.log(res.data)
         return res.data;
     } catch (error) {
-        return error;
+        return {
+            error: 'error server'
+        }
     }
 }
 

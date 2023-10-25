@@ -17,7 +17,7 @@ function WalletButton() {
         main()
     }, [account])
 
-    return <div style={{ marginBottom: '20px' }}>
+    return <div style={{ marginBottom: '20px', display: 'flex' }}>
         {account == null ?
             <button class='btn wallet' onClick={() => {
                 if (window.ethereum) {
@@ -28,7 +28,7 @@ function WalletButton() {
                     alert("Please Install Metamask!!!");
                 }
             }}>
-                Connect Wallet
+                <strong>Connect Wallet</strong>
             </button> :
             <h2>Hello: {address}</h2>
         }
