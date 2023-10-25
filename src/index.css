@@ -34,10 +34,11 @@ h1 {
 
 h4 {
   margin: 0;
+  color: #f095f0;
 }
 
 h4:hover {
-  color: #ed81ed;
+  color: #e564e5;
 }
 
 .cancel:hover {
@@ -51,6 +52,7 @@ h4:hover {
 
 .flex {
   display: flex;
+  align-items: center;
 }
 
 .hover {

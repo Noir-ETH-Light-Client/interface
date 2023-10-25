@@ -12,12 +12,16 @@ function Entry({ name, value, isOpen = false }) {
         }}>
             <h3 style={{ fontWeight: 'bold' }}>{name}:</h3>
             {!open && <h3 style={{ marginLeft: '10px' }}>{shortValue(value)}</h3>}
+            {typeof value != 'object' && <h4 style={{ marginLeft: '30px', cursor: 'pointer' }} onClick={() => { navigator.clipboard.writeText(`${value}`) }}>Copy</h4>}
         </div>
         {(open && typeof value === 'object') && <div style={{ marginLeft: '20px' }}>
             {Object.entries(value).filter(([name1, _value1]) => name1[0] != '_').map(([name1, value1]) =>
+
                 <Entry name={name1} value={value1}></Entry>
+
+
             )}
-            <h4 style={{ cursor: 'pointer' }} onClick={() => setOpen(false)}>SHOW LESS</h4>
+            {/* <h4 style={{ cursor: 'pointer' }} onClick={() => setOpen(false)}>SHOW LESS</h4> */}
         </div>}
 
     </div>

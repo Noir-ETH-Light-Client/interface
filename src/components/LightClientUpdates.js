@@ -134,7 +134,7 @@ function LightClientUpdate({ obj, currentPeriod }) {
                         <h2 class='cancel' style={{ marginLeft: 'auto' }} onClick={() => setOpen(false)}>X</h2>
                     </div>
                     <div class="entry">
-                        <Entry name="LC Update" value={obj} isOpen={true}></Entry>
+                        <Entry name={obj.is_on_contract ? "Sync LC Update" : "Pending LC Update"} value={obj} isOpen={true}></Entry>
                     </div>
 
                 </div>

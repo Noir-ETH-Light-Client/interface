@@ -48,7 +48,7 @@ export function shortValue(value) {
         return `{...}`;
     } else {
         let res = `${value}`;
-        if (res.length > 10) return res.substring(0, 10) + '...';
+        if (res.length > 30) return res.substring(0, 14) + '...' + res.substring(res.length - 14, res.length);
         return res;
     }
 }
