@@ -100,3 +100,45 @@ export function arrayNumberToUint8Array(obj) {
     }
     return res;
 }
+
+export function convertContractObject(obj) {
+    if (typeof obj == 'object') {
+        var res = {};
+        if (typeof obj.toBigInt == 'function') return obj.toBigInt();
+        else if (Array.isArray(obj)) {
+            let keys = Object.keys(obj);
+            if (obj.length == keys.length) {
+                for (const key of keys) res[convertKey(key)] = convertContractObject(obj[key])
+            }
+            else {
+                for (let i = keys.length / 2; i < keys.length; i++) {
+                    let key = keys[i];
+                    res[convertKey(key)] = convertContractObject(obj[key]);
+                }
+            }
+        }
+        else {
+            let keys = Object.keys(obj);
+            for (const key of keys) res[convertKey(key)] = convertContractObject(obj[key]);
+        }
+        return res;
+    }
+    else return obj;
+}
+
+function convertKey(key) {
+    if (typeof key == 'string') {
+        if (key.length == 0) return key;
+        const firstChar = key.charAt(0);
+        const restOfString = key.slice(1);
+
+        const capitalizedString = firstChar.toUpperCase() + restOfString;
+
+        const regex = /[A-Z][a-z]*/g;
+        const matches = capitalizedString.match(regex);
+
+        return matches.join(" ");
+    }
+    else return key;
+}
+

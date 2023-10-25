@@ -131,12 +131,18 @@ h4:hover {
   left: 50%;
   transform: translate(-50%, 0);
   background: rgba(0, 0, 0, 0.76);
-  ;
   margin-top: 20px;
   padding: 20px;
   border-radius: 16px;
   width: 400px;
   z-index: 1000000;
+}
+
+.lc-store-detail {
+  background: rgba(0, 0, 0, 0.3);
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 16px;
 }
 
 .arrow-icon {

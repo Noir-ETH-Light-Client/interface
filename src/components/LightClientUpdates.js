@@ -89,7 +89,7 @@ function LightClientUpdates() {
 
 function LightClientUpdate({ obj, currentPeriod }) {
     let [open, setOpen] = useState(false);
-    let [loading, setLoading] = useState(false)
+    let [loading, setLoading] = useState(0)
     let period = Math.floor(Number(obj.signature_slot) / 8192)
     let { sendContract, account, setCntUpdate, cntUpdate } = useContext(UserContext)
     let status = obj.is_on_contract ? "done" : "pending";
@@ -97,18 +97,28 @@ function LightClientUpdate({ obj, currentPeriod }) {
     return <div class={`lc-update ${status}`} onClick={() => { if (open == false) setOpen(true) }} >
         {period == currentPeriod + 1 &&
             <div class="arrow">
-                {!loading ? <button class='btn' onClick={async () => {
-                    setLoading(true)
+                {loading == 0 && <button class='btn' onClick={async () => {
+                    setLoading(1)
                     let proof = await getLCProof(obj._id);
                     if (proof.error != null) alert("Proof error:" + proof.error);
-                    else if (account != null) await processLCUpdate(sendContract, proof);
+                    else if (account != null) {
+                        setLoading(2);
+                        await processLCUpdate(sendContract, proof);
+                    }
                     else alert("Please connect wallet");
                     setCntUpdate(++cntUpdate)
-                    setLoading(false)
-                }}>Push to contract</button> :
+                    setLoading(0)
+                }}>Push to contract</button>}
+                {loading == 1 &&
                     <button class="btn">
-                        <i class="fa fa-spinner fa-spin"></i>Loading
-                    </button>}
+                        <i class="fa fa-spinner fa-spin"></i>Generating Proof
+                    </button>
+                }
+                {loading == 2 &&
+                    <button class="btn">
+                        <i class="fa fa-spinner fa-spin"></i>Verifying Proof
+                    </button>
+                }
                 <i class="fa fa-arrow-down"></i>
             </div>}
         <h3>period {period}</h3>

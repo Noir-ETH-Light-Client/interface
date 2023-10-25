@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { getLCStore } from "../service";
+import { convertContractObject, getLCStore } from "../service";
 import { UserContext } from "../Context";
 import Entry from "./Entry";
 import Loading from "./Loading";
@@ -26,19 +26,20 @@ function LightClientStore() {
         const main = async () => {
             setLoadingContractStore(true);
             if (callContract != null) {
-                let sync_commitee = await callContract.queryCurrentSyncCommitee();
-                let best_valid_update = await callContract.queryCurrentBestValidUpdate();
-                let finalize_header = await callContract.finalizeHeader();
-                let optimistic_header = await callContract.optimisticHeader();
-                let max_active_participants = await callContract.queryCurrentMaxActiveParticipants();
-                setContractLcStore({
-                    sync_commitee,
-                    best_valid_update,
-                    finalize_header,
-                    optimistic_header,
-                    max_active_participants
-                })
-                console.log(34)
+                let syncCommitee = await callContract.queryCurrentSyncCommitee();
+                let bestValidUpdate = await callContract.queryCurrentBestValidUpdate();
+                let finalizeHeader = await callContract.finalizeHeader();
+                let optimisticHeader = await callContract.optimisticHeader();
+                let maxActiveParticipants = await callContract.queryCurrentMaxActiveParticipants();
+
+                setContractLcStore(convertContractObject({
+                    finalizeHeader,
+                    optimisticHeader,
+                    syncCommitee,
+                    bestValidUpdate,
+                    maxActiveParticipants
+                }))
+
             }
 
             setLoadingContractStore(false);
@@ -46,21 +47,25 @@ function LightClientStore() {
         main();
     }, [cntUpdate, callContract])
 
-    return <div class="lc-store">
-        <div class="container" style={{ marginRight: '20px' }}>
-            <h1>Contract Light Client Store</h1>
-            <div class="entry">
-                {loadingStore || contractLcStore == null ? <Loading></Loading> : <Entry name="Light Client Store" value={contractLcStore} isOpen={true}></Entry>}
-            </div>
+    return <div class="container" style={{ marginBottom: '20px' }}>
+        <h1>Contract Light Client Store</h1>
 
+        {loadingStore || contractLcStore == null ? <Loading></Loading> :
+            <div class="lc-store">
+                {
+                    Object.keys(contractLcStore).map((key, i) => {
+                        let value = contractLcStore[key];
+                        var marginRight = i % 2 == 0 ? '20px' : '0';
+                        return <div class='entry lc-store-detail' style={{ marginRight: marginRight }}>
+                            <Entry name={key} value={value} isOpen={true}>
+                            </Entry>
+                        </div>
 
-        </div>
-        <div class="container">
-            <h1>Backend Light Client Store</h1>
-            <div class="entry">
-                {loadingContractStore || lcStore == null ? <Loading></Loading> : <Entry name="Light Client Store" value={lcStore} isOpen={true}></Entry>}
-            </div>
-        </div>
+                    })
+                }
+
+            </div>}
+
     </div>
 
 }
