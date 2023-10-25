@@ -30,7 +30,7 @@ function WalletButton() {
             }}>
                 <strong>Connect Wallet</strong>
             </button> :
-            <h2>Hello: {address}</h2>
+            <h2 style={{ color: '#000' }}>Hello: {address}</h2>
         }
     </div>
 }
