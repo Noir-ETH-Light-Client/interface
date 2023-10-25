@@ -10,7 +10,7 @@ function LightClientUpdates() {
     var [signatureSlot, setSignatureSlot] = useState(null);
     var [currentPeriod, setCurrentPeriod] = useState(null);
     var [percent, setPercent] = useState(0);
-    var { callContract, cntUpdate } = useContext(UserContext);
+    var { callContract, cntUpdate, minWidth } = useContext(UserContext);
 
     useEffect(() => {
         const main = async () => {
@@ -58,19 +58,19 @@ function LightClientUpdates() {
         {!loadingUpdates && lcUpdates != null && <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <div class='lc-updates' style={{ flexBasis: '1' }}>
                 {lcUpdates.preType > 0 && <LightClientUpdate obj={lcUpdates.oldest} currentPeriod={currentPeriod}></LightClientUpdate>}
-                {lcUpdates.preType > 2 && <Line type={2}></Line>}
-                {lcUpdates.preType > 2 && <i class="fa fa-arrow-circle-o-left arrow-icon" onClick={() => setSignatureSlot(lcUpdates.less.signature_slot)}></i>}
-                {lcUpdates.preType > 2 && <Line type={2}></Line>}
-                {lcUpdates.preType <= 2 && lcUpdates.preType >= 1 && <Line type={1}></Line>}
-                {lcUpdates.preType > 1 && <LightClientUpdate obj={lcUpdates.less} currentPeriod={currentPeriod}></LightClientUpdate>}
-                {lcUpdates.preType > 1 && lcUpdates.preType >= 1 && <Line type={1}></Line>}
+                {(lcUpdates.preType > 2 || (lcUpdates.preType > 1 && minWidth < 1200)) && <Line type={2}></Line>}
+                {(lcUpdates.preType > 2 || (lcUpdates.preType > 1 && minWidth < 1200)) && <i class="fa fa-arrow-circle-o-left arrow-icon" onClick={() => setSignatureSlot(lcUpdates.less.signature_slot)}></i>}
+                {(lcUpdates.preType > 2 || (lcUpdates.preType > 1 && minWidth < 1200)) && <Line type={2}></Line>}
+                {((lcUpdates.preType <= 2 && lcUpdates.preType >= 1 && minWidth >= 1200) || (lcUpdates.preType == 1 && minWidth < 1200)) && <Line type={1}></Line>}
+                {lcUpdates.preType > 1 && minWidth > 1200 && <LightClientUpdate obj={lcUpdates.less} currentPeriod={currentPeriod}></LightClientUpdate>}
+                {lcUpdates.preType > 1 && minWidth > 1200 && lcUpdates.preType >= 1 && <Line type={1}></Line>}
                 {lcUpdates.current != null && <LightClientUpdate obj={lcUpdates.current} currentPeriod={currentPeriod}></LightClientUpdate>}
-                {lcUpdates.sufType > 1 && lcUpdates.sufType >= 1 && <Line type={1}></Line>}
-                {lcUpdates.greater != null && <LightClientUpdate obj={lcUpdates.greater} currentPeriod={currentPeriod}></LightClientUpdate>}
-                {lcUpdates.sufType > 2 && <Line type={2}></Line>}
-                {lcUpdates.sufType > 2 && <i class="fa fa-arrow-circle-o-right arrow-icon" onClick={() => setSignatureSlot(lcUpdates.greater.signature_slot)}></i>}
-                {lcUpdates.sufType > 2 && <Line type={2}></Line>}
-                {lcUpdates.sufType <= 2 && lcUpdates.sufType >= 1 && <Line type={1}></Line>}
+                {lcUpdates.sufType > 1 && minWidth > 1200 && lcUpdates.sufType >= 1 && <Line type={1}></Line>}
+                {lcUpdates.greater != null && minWidth > 1200 && <LightClientUpdate obj={lcUpdates.greater} currentPeriod={currentPeriod}></LightClientUpdate>}
+                {(lcUpdates.sufType > 2 || (lcUpdates.sufType > 1 && minWidth < 1200)) && <Line type={2}></Line>}
+                {(lcUpdates.sufType > 2 || (lcUpdates.sufType > 1 && minWidth < 1200)) && <i class="fa fa-arrow-circle-o-right arrow-icon" onClick={() => setSignatureSlot(lcUpdates.greater.signature_slot)}></i>}
+                {(lcUpdates.sufType > 2 || (lcUpdates.sufType > 1 && minWidth < 1200)) && <Line type={2}></Line>}
+                {((lcUpdates.sufType <= 2 && lcUpdates.sufType >= 1 && minWidth >= 1200) || (lcUpdates.sufType == 1 && minWidth < 1200)) && <Line type={1}></Line>}
                 {lcUpdates.newest != null && <LightClientUpdate obj={lcUpdates.newest} currentPeriod={currentPeriod}></LightClientUpdate>}
             </div>
 
@@ -111,7 +111,7 @@ function LightClientUpdate({ obj, currentPeriod }) {
                     }
                     else alert("Please connect wallet");
 
-                }}>Push to contract</button>}
+                }}>Sync to contract</button>}
                 {loading == 1 &&
                     <button class="btn">
                         <i class="fa fa-spinner fa-spin"></i> Generating
@@ -124,17 +124,17 @@ function LightClientUpdate({ obj, currentPeriod }) {
                 }
                 <i class="fa fa-arrow-down"></i>
             </div>}
-        <h3>period {period}</h3>
+        <h3 style={{ display: 'flex', justifyContent: 'center' }}>period {period}</h3>
         {open &&
             <div class="lc-update-wrapper">
                 <div style={{ height: '20px' }}></div>
                 <div class='lc-update-detail'>
                     <div style={{ display: 'flex' }}>
-                        <h2>{`LC Update at period ${period}`}</h2>
+                        <h2 class={`${status}`} style={{ padding: '3px 5px', borderRadius: '5px' }}>{obj.is_on_contract ? "Sync" : "Pending"}</h2>
                         <h2 class='cancel' style={{ marginLeft: 'auto' }} onClick={() => setOpen(false)}>X</h2>
                     </div>
                     <div class="entry">
-                        <Entry name={obj.is_on_contract ? "Sync LC Update" : "Pending LC Update"} value={obj} isOpen={true}></Entry>
+                        <Entry name={`LC Update at period ${period}`} value={obj} isOpen={true}></Entry>
                     </div>
 
                 </div>

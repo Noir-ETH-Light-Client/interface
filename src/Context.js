@@ -12,11 +12,32 @@ function UserProvider({ children }) {
     var [callContract, setCallContract] = useState(null);
     var [provider, setProvider] = useState(null);
     var [cntUpdate, setCntUpdate] = useState(0);
+    const [minWidth, setMinWidth] = useState(window.innerWidth);
+
+    // Update the minWidth state when the window is resized
+    useEffect(() => {
+        function handleResize() {
+            setMinWidth(window.innerWidth);
+        }
+
+        // Attach the event listener
+        window.addEventListener('resize', handleResize);
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     useEffect(() => {
         const main = async () => {
             provider = (window.ethereum != null) ? new ethers.providers.Web3Provider(window.ethereum) : ethers.providers.getDefaultProvider();
             setProvider(provider);
+            try {
+                console.log(await (await provider.getSigner()).getAddress());
+                setAccount(await provider.getSigner());
+            }
+            catch { }
             let network = await provider.getNetwork();
             if (network.name == 'goerli') {
                 callContract = new ethers.Contract(ContractAddress, artifact.abi, provider);
@@ -41,7 +62,7 @@ function UserProvider({ children }) {
 
 
     return (
-        <UserContext.Provider value={{ account, setAccount, sendContract, callContract, provider, cntUpdate, setCntUpdate }}>
+        <UserContext.Provider value={{ account, setAccount, sendContract, callContract, provider, cntUpdate, setCntUpdate, minWidth }}>
             {children}
         </UserContext.Provider>
     );

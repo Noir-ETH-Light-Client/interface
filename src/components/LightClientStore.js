@@ -9,7 +9,7 @@ function LightClientStore() {
     var [loadingContractStore, setLoadingContractStore] = useState(true);
     var [lcStore, setLcStore] = useState(null);
     var [contractLcStore, setContractLcStore] = useState(null);
-    var { callContract, cntUpdate } = useContext(UserContext);
+    var { callContract, cntUpdate, minWidth } = useContext(UserContext);
 
     useEffect(() => {
         const main = async () => {
@@ -55,7 +55,7 @@ function LightClientStore() {
                 {
                     Object.keys(contractLcStore).map((key, i) => {
                         let value = contractLcStore[key];
-                        var marginRight = i % 2 == 0 ? '20px' : '0';
+                        var marginRight = (i % 2 == 0 && minWidth >= 1200) ? '20px' : '0';
                         return <div class='entry lc-store-detail' style={{ marginRight: marginRight }}>
                             <Entry name={key} value={value} isOpen={true}>
                             </Entry>
