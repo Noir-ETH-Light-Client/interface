@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const url = `http://localhost:8000/api/v1`;
+const url = `http://178.128.216.246:8000/api/v1`;
 
 export async function getLCStore() {
     try {
-        var res = await axios.get(`${url}/store`, { timeout: 100000 });
+        var res = await axios.get(`${url}/store`, { timeout: 10000000 });
         console.log(res.data)
         return res.data;
     } catch (error) {
@@ -17,7 +17,7 @@ export async function getLCStore() {
 
 export async function getLCUpdates(period) {
     try {
-        var res = await axios.get(`${url}/update/${period}`, { timeout: 100000 });
+        var res = await axios.get(`${url}/update/${period}`, { timeout: 10000000 });
         console.log(res.data)
         return res.data;
     } catch (error) {
@@ -29,7 +29,7 @@ export async function getLCUpdates(period) {
 
 export async function getLCProof(lcUpdateId) {
     try {
-        var res = await axios.get(`${url}/proof/${lcUpdateId}`, { timeout: 100000 });
+        var res = await axios.get(`${url}/proof/${lcUpdateId}`, { timeout: 10000000 });
         console.log(res.data)
         return res.data;
     } catch (error) {
